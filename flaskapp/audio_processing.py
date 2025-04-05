@@ -2,8 +2,8 @@ import os
 import json
 import zipfile
 from datetime import datetime
-from app import db
-from app.models import AudioFile, AudioClip
+from flaskapp import db
+from flaskapp.models import AudioFile, AudioClip
 from flask import current_app
 import uuid
 import logging

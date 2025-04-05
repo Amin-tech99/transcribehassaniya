@@ -3,25 +3,5 @@ services:
     name: hassaniya-transcription-app
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi_entry:app
-    envVars:
-      - key: FLASK_APP
-        value: run.py
-      - key: FLASK_ENV
-        value: production
-      - key: SECRET_KEY
-        generateValue: true
-      - key: DATABASE_URL
-        fromDatabase:
-          name: hassaniya-db
-          property: connectionString
-    disk:
-      name: uploads
-      mountPath: /app/app/static/uploads
-      sizeGB: 10
-
-databases:
-  - name: hassaniya-db
-    databaseName: hassaniya
-    user: hassaniya_user
+    startCommand: gunicorn run:app
     plan: free

@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, send_file
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-from app import db
-from app.models import User, AudioFile, AudioClip
-from app.audio_processing import process_audio_file, export_dataset, auto_assign_clips
+from flaskapp import db
+from flaskapp.models import User, AudioFile, AudioClip
+from flaskapp.audio_processing import process_audio_file, export_dataset, auto_assign_clips
 import os
 from datetime import datetime
 import uuid
