@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Pre-Processed Clips{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h2 class="text-center">Upload Pre-Processed Clips</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <p><strong>Instructions:</strong></p>
+                        <ol>
+                            <li>Prepare a ZIP file containing your pre-processed audio clips (.wav, .mp3, .ogg, or .flac)</li>
+                            <li>Upload the ZIP file below</li>
+                            <li>The system will extract all clips and make them available for transcription</li>
+                        </ol>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="file">Select ZIP file</label>
+                            <input type="file" class="form-control-file" id="file" name="file" accept=".zip" required>
+                            <small class="form-text text-muted">Maximum file size: 500MB</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Upload</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="text-center">
+                        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
