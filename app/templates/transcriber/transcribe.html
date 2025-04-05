@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Transcribe Audio - Hassaniya Arabic Transcription App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-language me-2"></i>Transcribe Audio</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Audio Clip: {{ clip.filename }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5><i class="fas fa-headphones me-2"></i>Listen to Audio</h5>
+                    <div class="audio-player-container">
+                        <audio controls class="w-100" id="audio-player">
+                            <source src="{{ clip_url }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <div class="d-flex justify-content-center mt-2">
+                            <button class="btn btn-sm btn-outline-secondary me-2" onclick="setPlaybackRate(0.5)">0.5x</button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="setPlaybackRate(1.0)">1x</button>
+                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="setPlaybackRate(1.5)">1.5x</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <p class="text-muted">
+                        <strong>Tip:</strong> Press <kbd>Ctrl</kbd> + <kbd>Space</kbd> to play/pause the audio 
+                        and <kbd>Shift</kbd> + <kbd>Enter</kbd> to save your transcription.
+                    </p>
+                </div>
+                
+                {% if clip.status == 'pending' or clip.status == 'rejected' %}
+                <form method="post" id="transcription-form">
+                    <div class="mb-4">
+                        <h5><i class="fas fa-keyboard me-2"></i>Enter Transcription</h5>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Transcription" id="transcription" name="transcription" 
+                                      style="height: 150px; direction: rtl;" dir="rtl" autofocus>{{ clip.transcription }}</textarea>
+                            <label for="transcription">Type your transcription here (right-to-left)</label>
+                        </div>
+                    </div>
+
+                    {% if clip.status == 'rejected' and clip.feedback %}
+                    <div class="mb-4">
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-comment-dots me-2"></i>Admin Feedback:</h6>
+                            <p class="mb-0">{{ clip.feedback }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('main.transcriber_dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-success" id="submit-btn">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Transcription
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="mb-4">
+                    <h5><i class="fas fa-language me-2"></i>Your Transcription</h5>
+                    <div class="p-3 bg-light rounded" style="direction: rtl;" dir="rtl">
+                        <p class="mb-0">{{ clip.transcription }}</p>
+                    </div>
+                </div>
+
+                {% if clip.status == 'approved' %}
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-check-circle me-2"></i>This transcription has been approved!</h6>
+                    {% if clip.feedback %}
+                    <p class="mb-0">Feedback: {{ clip.feedback }}</p>
+                    {% endif %}
+                </div>
+                {% elif clip.status == 'submitted' %}
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-clock me-2"></i>This transcription is awaiting review.</h6>
+                </div>
+                {% endif %}
+                
+                <div class="d-flex justify-content-start">
+                    <a href="{{ url_for('main.transcriber_dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function setPlaybackRate(rate) {
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.playbackRate = rate;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const audioPlayer = document.getElementById('audio-player');
+        const transcriptionArea = document.getElementById('transcription');
+        const form = document.getElementById('transcription-form');
+
+        // Play/pause with Ctrl+Space
+        document.addEventListener('keydown', function(e) {
+            // Check if Ctrl+Space is pressed
+            if (e.ctrlKey && e.code === 'Space') {
+                e.preventDefault();
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                } else {
+                    audioPlayer.pause();
+                }
+            }
+            
+            // Submit form with Shift+Enter
+            if (e.shiftKey && e.code === 'Enter' && form) {
+                e.preventDefault();
+                form.submit();
+            }
+        });
+
+        // Focus the transcription area when audio ends
+        audioPlayer.addEventListener('ended', function() {
+            if (transcriptionArea) {
+                transcriptionArea.focus();
+            }
+        });
+
+        // Loop the audio on button click
+        document.getElementById('loop-btn')?.addEventListener('click', function() {
+            audioPlayer.loop = !audioPlayer.loop;
+            this.classList.toggle('btn-outline-secondary');
+            this.classList.toggle('btn-secondary');
+        });
+    });
+</script>
+{% endblock %}

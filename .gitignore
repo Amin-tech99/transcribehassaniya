@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+
+# Flask
+instance/
+.webassets-cache
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads
+app/static/uploads/raw/*
+app/static/uploads/clips/*
+app/static/uploads/exports/*
+!app/static/uploads/raw/.gitkeep
+!app/static/uploads/clips/.gitkeep
+!app/static/uploads/exports/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment Variables
+.env
+.flaskenv

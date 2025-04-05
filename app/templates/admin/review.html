@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Review Transcription - Hassaniya Arabic Transcription App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-clipboard-check me-2"></i>Review Transcription</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Audio Clip: {{ clip.filename }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5><i class="fas fa-headphones me-2"></i>Listen to Audio</h5>
+                    <div class="audio-player-container">
+                        <audio controls class="w-100" id="audio-player">
+                            <source src="{{ clip_url }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <div class="d-flex justify-content-center mt-2">
+                            <button class="btn btn-sm btn-outline-secondary me-2" onclick="setPlaybackRate(0.5)">0.5x</button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="setPlaybackRate(1.0)">1x</button>
+                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="setPlaybackRate(1.5)">1.5x</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h5><i class="fas fa-info-circle me-2"></i>Clip Information</h5>
+                    <table class="table table-sm">
+                        <tbody>
+                            <tr>
+                                <th style="width: 30%">Original File:</th>
+                                <td>{{ clip.source_file.original_filename if clip.source_file else 'Unknown' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Transcriber:</th>
+                                <td>{{ clip.transcriber.username if clip.transcriber else 'Unassigned' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Submitted:</th>
+                                <td>{{ clip.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Duration:</th>
+                                <td>{{ (clip.end_time - clip.start_time)|round(1) }} seconds</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <form method="post">
+                    <div class="mb-4">
+                        <h5><i class="fas fa-language me-2"></i>Transcription</h5>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Transcription" id="transcription" name="transcription" style="height: 150px; direction: rtl;" dir="rtl">{{ clip.transcription }}</textarea>
+                            <label for="transcription">Edit Transcription (if needed)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5><i class="fas fa-comment me-2"></i>Feedback (Optional)</h5>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Feedback" id="feedback" name="feedback" style="height: 100px;">{{ clip.feedback or '' }}</textarea>
+                            <label for="feedback">Provide feedback to the transcriber</label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <div>
+                            <button type="submit" name="action" value="reject" class="btn btn-danger me-2">
+                                <i class="fas fa-times-circle me-2"></i>Reject
+                            </button>
+                            <button type="submit" name="action" value="approve" class="btn btn-success">
+                                <i class="fas fa-check-circle me-2"></i>Approve
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function setPlaybackRate(rate) {
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.playbackRate = rate;
+    }
+</script>
+{% endblock %}

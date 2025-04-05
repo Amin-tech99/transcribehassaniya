@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Audio - Hassaniya Arabic Transcription App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-upload me-2"></i>Upload Audio</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Upload Audio File for Transcription</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Upload a Hassaniya Arabic audio file. The system will automatically remove silence and split 
+                    the audio into shorter segments using Silero-VAD for easier transcription.
+                </p>
+                
+                <form method="post" enctype="multipart/form-data" id="upload-form">
+                    <div class="mb-4">
+                        <label for="file" class="form-label">Select Audio File</label>
+                        <input type="file" class="form-control" id="file" name="file" accept="audio/*" required>
+                        <div class="form-text">
+                            Supported formats: WAV, MP3, M4A, FLAC. Maximum file size: 500MB.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3" id="upload-progress-container" style="display: none;">
+                        <label class="form-label">Upload Progress</label>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" id="upload-progress" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="form-text text-center" id="progress-text">Preparing upload...</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg" id="upload-button">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>Upload and Process
+                        </button>
+                        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Processing Information</h5>
+            </div>
+            <div class="card-body">
+                <p>The audio processing pipeline will:</p>
+                <ol>
+                    <li>Upload your audio file to the server</li>
+                    <li>Use Silero-VAD to detect speech segments and remove silence</li>
+                    <li>Split the audio into shorter clips (approximately 10-15 seconds each)</li>
+                    <li>Store the clips for transcription assignment</li>
+                </ol>
+                <p class="mb-0 text-muted">
+                    <strong>Note:</strong> Processing may take some time depending on the file size. You'll be 
+                    redirected to the dashboard once processing is complete.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#upload-form').on('submit', function() {
+            // Show progress bar
+            $('#upload-progress-container').show();
+            $('#upload-button').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin me-2"></i>Processing...');
+            
+            // Simulate progress (in a real app, you'd use AJAX with progress tracking)
+            let progress = 0;
+            const interval = setInterval(function() {
+                progress += 5;
+                if (progress <= 90) {
+                    $('#upload-progress').css('width', progress + '%');
+                    $('#progress-text').text('Uploading: ' + progress + '%');
+                } else {
+                    clearInterval(interval);
+                    $('#upload-progress').css('width', '100%');
+                    $('#progress-text').text('Processing audio with Silero-VAD. Please wait...');
+                }
+            }, 500);
+        });
+    });
+</script>
+{% endblock %}
