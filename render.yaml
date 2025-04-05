@@ -3,7 +3,7 @@ services:
     name: hassaniya-transcription-app
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: cd /opt/render/project/src && python -m gunicorn run:app
+    startCommand: gunicorn wsgi_entry:app
     envVars:
       - key: FLASK_APP
         value: run.py
